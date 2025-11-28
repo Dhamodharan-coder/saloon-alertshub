@@ -1,0 +1,150 @@
+{
+  "info": {
+    "name": "Saloon AlertsHub API",
+    "description": "Notification & OTP Microservice API Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "OTP",
+      "item": [
+        {
+          "name": "Request OTP",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"user@example.com\",\n  \"purpose\": \"login\",\n  \"userName\": \"John Doe\",\n  \"useKafka\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/otp/request",
+              "host": ["{{baseUrl}}"],
+              "path": ["otp", "request"]
+            }
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"user@example.com\",\n  \"otp\": \"123456\",\n  \"purpose\": \"login\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/otp/verify",
+              "host": ["{{baseUrl}}"],
+              "path": ["otp", "verify"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Email",
+      "item": [
+        {
+          "name": "Send Templated Email",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"recipient@example.com\",\n  \"templateName\": \"booking_confirmation\",\n  \"data\": {\n    \"userName\": \"John Doe\",\n    \"serviceName\": \"Haircut\",\n    \"bookingDate\": \"2023-12-01\",\n    \"bookingTime\": \"10:00 AM\",\n    \"location\": \"Downtown Salon\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/email/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["email", "send"]
+            }
+          }
+        },
+        {
+          "name": "Email Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/email/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["email", "health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Push Notifications",
+      "item": [
+        {
+          "name": "Send Push Notification",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user123\",\n  \"title\": \"New Booking\",\n  \"body\": \"You have a new booking at 10:00 AM\",\n  \"data\": {\n    \"bookingId\": \"booking123\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/push/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["push", "send"]
+            }
+          }
+        },
+        {
+          "name": "Register Device",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user123\",\n  \"token\": \"device-token-abc123\",\n  \"platform\": \"ios\",\n  \"deviceId\": \"ABC123\",\n  \"deviceModel\": \"iPhone 14 Pro\",\n  \"osVersion\": \"17.0\",\n  \"appVersion\": \"1.0.0\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/push/device/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["push", "device", "register"]
+            }
+          }
+        },
+        {
+          "name": "Unregister Device",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"device-token-abc123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/push/device/unregister",
+              "host": ["{{baseUrl}}"],
+              "path": ["push", "device", "unregister"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api/v1"
+    }
+  ]
+}
