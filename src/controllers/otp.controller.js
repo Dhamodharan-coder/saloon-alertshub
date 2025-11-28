@@ -1,11 +1,10 @@
-const otpService = require("../services/otp.service");
 const emailService = require("../services/email/email.service");
 const { KafkaProducerService } = require("../services/kafka.producer");
 const logger = require("../utils/logger");
 
 exports.requestOTP = async (req, res) => {
   try {
-    const { identifier, purpose, userName, useKafka = false,otp } = req.body;
+    const { identifier, purpose, userName, useKafka = false, otp } = req.body;
 
     if (!identifier || !purpose) {
       return res.status(400).json({
@@ -20,7 +19,7 @@ exports.requestOTP = async (req, res) => {
         purpose,
         templateName: `otp_${purpose}`,
         metadata: { userName },
-        otp
+        otp,
       });
 
       return res.status(202).json({
@@ -30,15 +29,15 @@ exports.requestOTP = async (req, res) => {
     }
 
     // Split OTP into individual digits for the template
-    const otpDigits = otp.toString().split('');
+    const otpDigits = otp.toString().split("");
     const otpData = {
       otp: otp,
-      d1: otpDigits[0] || '',
-      d2: otpDigits[1] || '',
-      d3: otpDigits[2] || '',
-      d4: otpDigits[3] || '',
-      d5: otpDigits[4] || '',
-      d6: otpDigits[5] || '',
+      d1: otpDigits[0] || "",
+      d2: otpDigits[1] || "",
+      d3: otpDigits[2] || "",
+      d4: otpDigits[3] || "",
+      d5: otpDigits[4] || "",
+      d6: otpDigits[5] || "",
       userName: userName || identifier,
       expiryMinutes: "5 mins",
     };
@@ -59,33 +58,6 @@ exports.requestOTP = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || "Failed to send OTP",
-    });
-  }
-};
-
-exports.verifyOTP = async (req, res) => {
-  try {
-    const { identifier, otp, purpose } = req.body;
-
-    if (!identifier || !otp || !purpose) {
-      return res.status(400).json({
-        success: false,
-        message: "Identifier, OTP, and purpose are required",
-      });
-    }
-
-    const result = await otpService.verifyOTP(identifier, otp, purpose);
-
-    res.status(200).json({
-      success: true,
-      message: "OTP verified successfully",
-      verified: result.verified,
-    });
-  } catch (error) {
-    logger.error("Verify OTP error:", error);
-    res.status(400).json({
-      success: false,
-      message: error.message || "OTP verification failed",
     });
   }
 };
