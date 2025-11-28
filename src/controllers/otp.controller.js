@@ -29,15 +29,24 @@ exports.requestOTP = async (req, res) => {
       });
     }
 
+    // Split OTP into individual digits for the template
+    const otpDigits = otp.toString().split('');
+    const otpData = {
+      otp: otp,
+      d1: otpDigits[0] || '',
+      d2: otpDigits[1] || '',
+      d3: otpDigits[2] || '',
+      d4: otpDigits[3] || '',
+      d5: otpDigits[4] || '',
+      d6: otpDigits[5] || '',
+      userName: userName || identifier,
+      expiryMinutes: "5 mins",
+    };
 
     await emailService.sendTemplatedEmail({
       to: identifier,
       templateName: `otp_${purpose}`,
-      data: {
-        otp: otp,
-        userName: userName || identifier,
-        expiryMinutes: "5 mins",
-      },
+      data: otpData,
     });
 
     res.status(200).json({

@@ -68,19 +68,29 @@ class KafkaConsumerService {
 
   async handleOTPRequest(data) {
     try {
-      const { identifier, purpose, templateName, metadata,otp } = data;
+      const { identifier, purpose, templateName, metadata, otp } = data;
+
+      // Split OTP into individual digits for the template
+      const otpDigits = otp.toString().split('');
+      const otpData = {
+        otp: otp,
+        d1: otpDigits[0] || '',
+        d2: otpDigits[1] || '',
+        d3: otpDigits[2] || '',
+        d4: otpDigits[3] || '',
+        d5: otpDigits[4] || '',
+        d6: otpDigits[5] || '',
+        userName: metadata?.userName || identifier,
+        expiryMinutes: "5 Mins",
+      };
 
       await emailService.sendTemplatedEmail({
         to: identifier,
-        templateName: templateName || "otp_login",
-        data: {
-          otp: otp,
-          userName: metadata?.userName || identifier,
-          expiryMinutes: "5 Mins",
-        },
+        templateName: templateName || `otp_${purpose}`,
+        data: otpData,
       });
 
-      logger.info(`OTP sent to ${identifier} for ${purpose}`);
+      logger.info(`OTP email sent successfully to ${identifier}`);
     } catch (error) {
       logger.error("Error handling OTP request:", error);
       throw error;
