@@ -1,7 +1,6 @@
 const { consumer, connectConsumer } = require("../config/kafka");
 const emailService = require("./email/email.service");
 const pushService = require("./push/push.service");
-const otpService = require("./otp.service");
 const logger = require("../utils/logger");
 const { TOPICS } = require("./kafka.producer");
 
@@ -69,16 +68,15 @@ class KafkaConsumerService {
 
   async handleOTPRequest(data) {
     try {
-      const { identifier, purpose, templateName, metadata } = data;
-      const otpData = await otpService.createOTP(identifier, purpose, metadata);
+      const { identifier, purpose, templateName, metadata,otp } = data;
 
       await emailService.sendTemplatedEmail({
         to: identifier,
         templateName: templateName || "otp_login",
         data: {
-          otp: otpData.otp,
+          otp: otp,
           userName: metadata?.userName || identifier,
-          expiryMinutes: otpData.expiryMinutes,
+          expiryMinutes: "5 Mins",
         },
       });
 

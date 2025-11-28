@@ -5,7 +5,7 @@ const logger = require("../utils/logger");
 
 exports.requestOTP = async (req, res) => {
   try {
-    const { identifier, purpose, userName, useKafka = false } = req.body;
+    const { identifier, purpose, userName, useKafka = false,otp } = req.body;
 
     if (!identifier || !purpose) {
       return res.status(400).json({
@@ -20,6 +20,7 @@ exports.requestOTP = async (req, res) => {
         purpose,
         templateName: `otp_${purpose}`,
         metadata: { userName },
+        otp
       });
 
       return res.status(202).json({
@@ -28,22 +29,21 @@ exports.requestOTP = async (req, res) => {
       });
     }
 
-    const otpData = await otpService.createOTP(identifier, purpose, { userName });
 
     await emailService.sendTemplatedEmail({
       to: identifier,
       templateName: `otp_${purpose}`,
       data: {
-        otp: otpData.otp,
+        otp: otp,
         userName: userName || identifier,
-        expiryMinutes: otpData.expiryMinutes,
+        expiryMinutes: "5 mins",
       },
     });
 
     res.status(200).json({
       success: true,
       message: "OTP sent successfully",
-      expiresAt: otpData.expiresAt,
+      expiresAt: "5 mins",
     });
   } catch (error) {
     logger.error("Request OTP error:", error);

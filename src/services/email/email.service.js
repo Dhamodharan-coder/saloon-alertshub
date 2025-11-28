@@ -43,7 +43,10 @@ class EmailService {
   async sendTemplatedEmail({ to, templateName, data = {}, provider, from, attachments = [] }) {
     try {
       const template = await this.getTemplate(templateName);
-      const defaultData = JSON.parse(template.default_data || "{}");
+      let defaultData = template.default_data || {};
+      if (typeof defaultData === 'string') {
+        defaultData = JSON.parse(defaultData || "{}");
+      }
       const mergedData = { ...defaultData, ...data };
       const subject = this.renderTemplate(template.subject, mergedData);
       const text = this.renderTemplate(template.body, mergedData);
